@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cars</title>
+    <style>
+        .come_on {
+            color: aqua;
+        }
+        .chur_ow {
+            color: blueviolet;
+        }
+        .chur_baka {
+            color: chartreuse;
+        }
+        .chur_wow {
+            color: yellow;
+        }
+        .chur_red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cars</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="come_on">Make</th>
+                <th class="come_on">Model</th>
+                <th class="come_on">Year</th>
+                <th class="come_on">Country of Origin</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in cars %}
+            <tr>
+                <td class="chur_ow">{{ car[0] }}</td>
+                <td class="chur_baka">{{ car[1] }}</td>
+                <td class="chur_wow">{{ car[2] }}</td>
+                <td class="chur_red">{{ car[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
