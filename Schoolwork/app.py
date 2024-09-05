@@ -1,7 +1,12 @@
 import sqlite3
 from flask import Flask, render_template
+import os
 
 app = Flask(__name__)
+
+picFolder = os.path.join('static','pics')
+
+app.config['UPLOAD_FOLDER'] = picFolder
 
 DATABASE = 'My_favourite_cars.db'
 
@@ -32,8 +37,9 @@ def get_pricing():
 
 @app.route('/')
 def index():
+    Ferrari = os.path.join(app.config['UPLOAD_FOLDER'], 'Ferrari.jpg')
     cars = get_cars()
-    return render_template('index.html', cars=cars)
+    return render_template('index.html', cars=cars, user_image = Ferrari)
 
 @app.route('/engines')
 def engine_specs():
