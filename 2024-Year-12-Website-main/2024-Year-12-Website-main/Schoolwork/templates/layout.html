@@ -3,16 +3,20 @@
 <head>
     <title>Your Car Enthusiast Hub - {{ title }}</title>
     <link rel="stylesheet" href="/static/stylesheet.css" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div id="wrapper">
         <header>
             <h1>Your Car Enthusiast Hub</h1>
             {% include 'nav.html' %}
+            <form action="{{ url_for('search') }}" method="POST" class="search-form">
+                <input type="text" name="query" placeholder="Search..." required>
+                <button type="submit">Search</button>
+            </form>
         </header>
         <main>{% block content %}{% endblock %}</main>
         <footer>{% include 'footer.html' %}</footer>
-    </div> 
+    </div>
 </body>
 </html>

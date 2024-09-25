@@ -48,6 +48,7 @@ main {
   display: block;
   margin: 20px auto;
   max-width: 100%;
+  min-width: 100%;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
@@ -98,4 +99,180 @@ table tr:hover {
 
 table tr:last-child td {
   border-bottom: none;
+}
+
+/* General Search Bar Styles */
+.search-form {
+  display: inline-flex;
+  margin-left: 20px;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.search-form input[type="text"] {
+  padding: 10px;
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 16px;
+}
+
+.search-form button {
+  padding: 10px 15px;
+  border: none;
+  background-color: #007BFF;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Focus State for Input */
+.search-form input[type="text"]:focus {
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Login and Register Page Styles */
+body.login, body.register {
+  background: linear-gradient(to bottom, #2b2b2b, #000000);
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 300px;
+  margin: auto;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: #666;
+  outline: none;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Animation for transitions */
+.fade {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.fade.in {
+  opacity: 1;
+}
+
+/* Centering buttons on the homepage */
+body.welcome {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+body.welcome a {
+  margin: 10px;
+}
+
+body.welcome div {
+  text-align: center;
+}
+
+/* Search Results Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #333;
+  color: #fff;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:hover {
+  background-color: #e0e0e0;
+}
+
+table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Headings Styles */
+h2 {
+  text-align: center;
+  margin: 20px 0;
+}
+
+h3 {
+  margin-top: 30px;
+  color: #333;
+}
+
+/* No Results Message */
+p {
+  text-align: center;
+  color: #666;
 }

@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h2>Search Results for "{{ query }}"</h2>
+
+    <h3>Cars</h3>
+    {% if car_results %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Country of Origin</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for car in car_results %}
+                <tr>
+                    <td>{{ car[0] }}</td>
+                    <td>{{ car[1] }}</td>
+                    <td>{{ car[2] }}</td>
+                    <td>{{ car[3] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No cars found.</p>
+    {% endif %}
+
+    <h3>Engines</h3>
+    {% if engine_results %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Engine Type</th>
+                    <th>Horse Power</th>
+                    <th>Torque (Nm)</th>
+                    <th>0-60 (s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for engine in engine_results %}
+                <tr>
+                    <td>{{ engine[0] }}</td>
+                    <td>{{ engine[1] }}</td>
+                    <td>{{ engine[2] }}</td>
+                    <td>{{ engine[3] }}</td>
+                    <td>{{ engine[4] }}</td>
+                    <td>{{ engine[5] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No engines found.</p>
+    {% endif %}
+
+    <h3>Pricing</h3>
+    {% if pricing_results %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for price in pricing_results %}
+                <tr>
+                    <td>{{ price[0] }}</td>
+                    <td>{{ price[1] }}</td>
+                    <td>{{ price[2] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No pricing information found.</p>
+    {% endif %}
+{% endblock %}

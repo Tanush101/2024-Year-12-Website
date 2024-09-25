@@ -4,22 +4,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Required for session management
+app.secret_key = 'your_secret_key'  #Required for session management
 
-# Path for storing static images
+#Path for storing static images
 picFolder = os.path.join('static', 'pics')
 app.config['UPLOAD_FOLDER'] = picFolder
 
 DATABASE = 'My_favourite_cars.db'
 
-# Database connection
+#Database connection
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
     return db
 
-# Query helper function
+#Query helper function
 def query_db(query, args=(), one=False):
     conn = get_db()
     cur = conn.execute(query, args)
@@ -27,7 +27,7 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
-# Create the User table if it doesn't exist
+#Create the User table if it doesn't exist
 def create_user_table():
     conn = get_db()
     conn.execute('''CREATE TABLE IF NOT EXISTS User (
@@ -37,7 +37,7 @@ def create_user_table():
     );''')
     conn.commit()
 
-# Insert a new user into the User table with hashed password
+#Insert a new user into the User table with hashed password
 def insert_user(username, password):
     conn = get_db()
     hashed_password = generate_password_hash(password)
@@ -47,30 +47,30 @@ def insert_user(username, password):
     except sqlite3.IntegrityError:
         return "User already exists."
 
-# Validate login
+#Validate login
 def valid_login(username, password):
     user = query_db('SELECT * FROM User WHERE username = ?', [username], one=True)
-    if user and check_password_hash(user[2], password):  # User is stored as (UserID, username, password)
+    if user and check_password_hash(user[2], password):  #User is stored as (UserID, username, password)
         return True
     return False
 
-# Log in the user
+#Log in the user
 def log_the_user_in(username):
-    session['username'] = username  # Store the username in the session
-    return redirect(url_for('homepage'))  # Redirect to the homepage after login
+    session['username'] = username  #Store the username in the session
+    return redirect(url_for('homepage'))  #Redirect to the homepage after login
 
-# Logout route
+#Logout route
 @app.route('/logout')
 def logout():
-    session.clear()  # Clear the user session
-    return redirect(url_for('home'))  # Redirect to the home page
+    session.clear()  #Clear the user session
+    return redirect(url_for('home'))  #Redirect to the home page
 
-# Home page route that gives option to login or register
+#Home page route that gives option to login or register
 @app.route('/')
 def home():
     return render_template('home.html')
 
-# Login page route
+#Login page route
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     error = None
@@ -83,7 +83,7 @@ def login():
             error = 'Invalid username/password'
     return render_template('login.html', error=error)
 
-# Route to register a new user
+#Route to register a new user
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     error = None
@@ -97,7 +97,7 @@ def register():
             return "User registered successfully!"
     return render_template('register.html', error=error)
 
-# Fetch cars
+#Fetch cars
 def get_cars():
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
@@ -106,7 +106,7 @@ def get_cars():
     conn.close()
     return cars
 
-# Fetch engine specs
+#Fetch engine specs
 def get_engines():
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
@@ -115,7 +115,7 @@ def get_engines():
     conn.close()
     return engines
 
-# Fetch pricing details
+#Fetch pricing details
 def get_pricing():
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
@@ -124,41 +124,83 @@ def get_pricing():
     conn.close()
     return pricing
 
-# Cars page route
+#Cars page route
 @app.route('/cars')
 def cars():  
     Ferrari = os.path.join(app.config['UPLOAD_FOLDER'], 'Ferrari.jpg')
     cars = get_cars()
-    return render_template('cars.html', cars=cars, user_image=Ferrari, title="Cars")  # Set title for the page
+    return render_template('cars.html', cars=cars, user_image=Ferrari, title="Cars")  #Set title for the page
 
-# Home page route after login
+#Home page route after login
 @app.route('/homepage')
 def homepage():
-    Ferrari = os.path.join(app.config['UPLOAD_FOLDER'], 'Ferrari.jpg')  # Define the image path
-    return render_template('homepage.html', user_image=Ferrari, title="Homepage")  # Pass user_image and title to the template
+    Cars = os.path.join(app.config['UPLOAD_FOLDER'], 'Cars.jpg')  #Define the image path
+    return render_template('homepage.html', user_image=Cars, title="Homepage")  #Pass user_image and title to the template
 
-# Engine specs route
+#Engine specs route
 @app.route('/engines')
 def engine_specs():
+    Engine = os.path.join(app.config['UPLOAD_FOLDER'], 'Engine.jpg')
     engines = get_engines()
-    return render_template('engines.html', engines=engines, title="Engines")  # Set title for the page
+    return render_template('engines.html', engines=engines, user_image=Engine, title="Engines")  #Set title for the page
 
-# Pricing info route
+#Pricing info route
 @app.route('/pricing')
 def pricing_info():
+    Pricing = os.path.join(app.config['UPLOAD_FOLDER'], 'Pricing.jpg')
     pricing = get_pricing()
-    return render_template('pricing.html', pricing=pricing, title="Pricing")  # Set title for the page
+    return render_template('pricing.html', pricing=pricing, user_image=Pricing, title="Pricing")  #Set title for the page
 
-# Close database connection
+#Close database connection
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
-# Run the Flask app
+@app.route('/search', methods=['POST'])
+def search():
+    query = request.form['query']
+    
+    #Connect to the database
+    conn = sqlite3.connect(DATABASE)
+    cur = conn.cursor()
+    
+    #Fetching results for cars
+    cur.execute("SELECT * FROM Cars WHERE Make LIKE ? OR Model LIKE ?", ('%' + query + '%', '%' + query + '%'))
+    car_results = cur.fetchall()
+
+    #Fetching results for engines
+    cur.execute("SELECT * FROM EngineSpecs WHERE Make LIKE ? OR Model LIKE ? OR EngineType LIKE ?", ('%' + query + '%', '%' + query + '%', '%' + query + '%'))
+    engine_results = cur.fetchall()
+    
+    #Fetching results for pricing
+    cur.execute("SELECT * FROM Pricing WHERE Make LIKE ? OR Model LIKE ?", ('%' + query + '%', '%' + query + '%'))
+    pricing_results = cur.fetchall()
+
+    #Close the connection
+    conn.close()
+    
+    return render_template('search_results.html', car_results=car_results, engine_results=engine_results, pricing_results=pricing_results, query=query)
+
+#404 error handler
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+#500 error handler
+@app.errorhandler(500)
+def internal_error(e):
+    return render_template('500.html'), 500
+
+#505 error handler
+@app.errorhandler(505)
+def http_version_not_supported(e):
+    return render_template('505.html'), 505
+
+#Run the Flask app
 if __name__ == '__main__':
-    # Create the User table on app startup
+    #Create the User table on app startup
     with app.app_context():
         create_user_table()
     app.run(debug=True)

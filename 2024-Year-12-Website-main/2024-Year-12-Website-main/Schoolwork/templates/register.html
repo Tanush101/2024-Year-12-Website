@@ -1,8 +1,8 @@
 <html>
-    <head>
-        <link rel="stylesheet" href="../static/form-style.css">
+<head>
+    <link rel="stylesheet" href="../static/stylesheet.css">
 
-        <script>
+    <script>
         function validateForm() {
             var username = document.forms["register-form"]["username"].value;
             var password = document.forms["register-form"]["password"].value;
@@ -30,21 +30,21 @@
 
             return true;
         }
-        </script>
-    </head>
-    <body>
-        <div>
-            <form name="register-form" action="/register" onsubmit="return validateForm()" target="_self" method="POST">
-                <h2>Register:</h2>
-                {% if error %}
-                  <p>{{ error }}</p>
-                {% endif %}
-                <input type="text" name="username" placeholder="Username"><br>
-                <input type="password" name="password" placeholder="Password"><br>
-                <input type="password" name="confirm-password" placeholder="Confirm Password"><br>
-                <input type="submit" value="Submit"><br>
-            </form>
-            <p>If you already have an account, <a href="/login" style="text-decoration: underline; color: blue;">sign in</a>.</p>
-        </div>
-    </body>
+    </script>
+</head>
+<body class="register">
+    <div class="container">
+        <form name="register-form" action="/register" onsubmit="return validateForm()" target="_self" method="POST">
+            <h2>Register:</h2>
+            {% if error %}
+              <p class="error">{{ error }}</p>
+            {% endif %}
+            <input type="text" name="username" placeholder="Username" required><br>
+            <input type="password" name="password" placeholder="Password" required><br>
+            <input type="password" name="confirm-password" placeholder="Confirm Password" required><br>
+            <button type="submit">Submit</button>
+        </form>
+        <p>If you already have an account, <a href="/login" style="text-decoration: underline; color: blue;">sign in</a>.</p>
+    </div>
+</body>
 </html>
