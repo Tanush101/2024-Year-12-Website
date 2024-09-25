@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../static/form-style.css">
+
+        <script>
+        function validateForm() {
+            var username = document.forms["register-form"]["username"].value;
+            var password = document.forms["register-form"]["password"].value;
+            var confirmPassword = document.forms["register-form"]["confirm-password"].value;
+
+            if (username == null || username == "") {
+                alert("Username must be filled out");
+                return false;
+            }
+
+            if (password == null || password == "") {
+                alert("Password must be filled out");
+                return false;
+            }
+
+            if (confirmPassword == null || confirmPassword == "") {
+                alert("Confirm Password must be filled out");
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match");
+                return false;
+            }
+
+            return true;
+        }
+        </script>
+    </head>
+    <body>
+        <div>
+            <form name="register-form" action="/register" onsubmit="return validateForm()" target="_self" method="POST">
+                <h2>Register:</h2>
+                {% if error %}
+                  <p>{{ error }}</p>
+                {% endif %}
+                <input type="text" name="username" placeholder="Username"><br>
+                <input type="password" name="password" placeholder="Password"><br>
+                <input type="password" name="confirm-password" placeholder="Confirm Password"><br>
+                <input type="submit" value="Submit"><br>
+            </form>
+            <p>If you already have an account, <a href="/login" style="text-decoration: underline; color: blue;">sign in</a>.</p>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Engine Type</th>
+            <th>Horsepower</th>
+            <th>Torque (Nm)</th>
+            <th>0-60 Time (s)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for engine in engines %}
+        <tr>
+            <td>{{ engine[0] }}</td>
+            <td>{{ engine[1] }}</td>
+            <td>{{ engine[2] }}</td>
+            <td>{{ engine[3] }}</td>
+            <td>{{ engine[4] }}</td>
+            <td>{{ engine[5] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
