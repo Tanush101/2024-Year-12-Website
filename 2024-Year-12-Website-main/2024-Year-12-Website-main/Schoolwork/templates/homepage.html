@@ -3,24 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/homepage-style.css">
+    <link rel="stylesheet" href="/static/stylesheet.css">
     <title>Welcome to the World of Cars</title>
 </head>
 <body>
     <header>
         <h1>Welcome to the World of Cars</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/register">Register</a></li>
-                <li><a href="/cars">Cars</a></li>
-                <li><a href="/engines">Engines</a></li>
-                <li><a href="/pricing">Pricing</a></li>
-            </ul>
-        </nav>
+        {% include 'nav.html' %} <!-- Include the navigation bar from nav.html -->
     </header>
     <main>
+        <img src="{{ user_image }}" alt="Ferrari" style="max-width: 100%; height: auto;">
+        
         <section class="introduction">
             <h2>Discover the Beauty of Cars</h2>
             <p>Cars are not just a means of transportation; they are a symbol of freedom, adventure, and passion. The hum of the engine, the sleek design, and the thrill of the open road create an unparalleled experience that captivates car enthusiasts worldwide.</p>

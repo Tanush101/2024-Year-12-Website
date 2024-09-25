@@ -126,27 +126,28 @@ def get_pricing():
 
 # Cars page route
 @app.route('/cars')
-def cars():  # Changed from index to cars
+def cars():  
     Ferrari = os.path.join(app.config['UPLOAD_FOLDER'], 'Ferrari.jpg')
     cars = get_cars()
-    return render_template('cars.html', cars=cars, user_image=Ferrari)  # Updated to render cars.html
+    return render_template('cars.html', cars=cars, user_image=Ferrari, title="Cars")  # Set title for the page
 
 # Home page route after login
 @app.route('/homepage')
 def homepage():
-    return render_template('homepage.html')  # Render homepage.html
+    Ferrari = os.path.join(app.config['UPLOAD_FOLDER'], 'Ferrari.jpg')  # Define the image path
+    return render_template('homepage.html', user_image=Ferrari, title="Homepage")  # Pass user_image and title to the template
 
 # Engine specs route
 @app.route('/engines')
 def engine_specs():
     engines = get_engines()
-    return render_template('engines.html', engines=engines)
+    return render_template('engines.html', engines=engines, title="Engines")  # Set title for the page
 
 # Pricing info route
 @app.route('/pricing')
 def pricing_info():
     pricing = get_pricing()
-    return render_template('pricing.html', pricing=pricing)
+    return render_template('pricing.html', pricing=pricing, title="Pricing")  # Set title for the page
 
 # Close database connection
 @app.teardown_appcontext
