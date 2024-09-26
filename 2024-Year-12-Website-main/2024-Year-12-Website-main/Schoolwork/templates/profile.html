@@ -2,9 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>You are in!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
 </head>
 <body>
-<p>Welcome {{ username }}</p>
+    <div class="container">
+        <h1>Welcome, {{ user.username }}!</h1>
+        <div class="profile-container">
+            <img src="{{ url_for('static', filename='profile-pictures/default.png') }}" alt="Profile Picture" class="profile-pic">
+            <div class="profile-info">
+                <p><strong>Name:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> Not available</p>
+                <a href="/logout" class="btn btn-primary">Logout</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
