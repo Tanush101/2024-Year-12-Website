@@ -5,7 +5,7 @@
         <h1>Cars</h1>
     </header>
 
-    <img src="{{ user_image }}" alt="Car Image" style="max-width: 100%; height: auto;">
+    <img src="{{ user_image }}" alt="User Image" style="max-width: 100%; height: auto;">
 
     <section class="introduction">
         <h2>Discover Our Cars</h2>
@@ -16,6 +16,7 @@
     <table>
         <thead>
             <tr>
+                <th>Image</th>
                 <th>Make</th>
                 <th>Model</th>
                 <th>Year</th>
@@ -25,6 +26,9 @@
         <tbody>
             {% for car in cars %}
             <tr>
+                <td>
+                    <img src="{{ url_for('static', filename='pics/' ~ car[4]) }}" alt="{{ car[1] }}" style="max-width: 100px; height: auto;">
+                </td>
                 <td>{{ car[0] }}</td>
                 <td>{{ car[1] }}</td>
                 <td>{{ car[2] }}</td>

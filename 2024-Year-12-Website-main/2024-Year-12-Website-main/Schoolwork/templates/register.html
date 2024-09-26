@@ -1,6 +1,10 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/stylesheet.css">
+    <title>Register</title>
 
     <script>
         function validateForm() {
@@ -8,17 +12,17 @@
             var password = document.forms["register-form"]["password"].value;
             var confirmPassword = document.forms["register-form"]["confirm-password"].value;
 
-            if (username == null || username == "") {
+            if (!username) {
                 alert("Username must be filled out");
                 return false;
             }
 
-            if (password == null || password == "") {
+            if (!password) {
                 alert("Password must be filled out");
                 return false;
             }
 
-            if (confirmPassword == null || confirmPassword == "") {
+            if (!confirmPassword) {
                 alert("Confirm Password must be filled out");
                 return false;
             }
@@ -34,10 +38,10 @@
 </head>
 <body class="register">
     <div class="container">
-        <form name="register-form" action="/register" onsubmit="return validateForm()" target="_self" method="POST">
+        <form name="register-form" action="/register" onsubmit="return validateForm()" method="POST">
             <h2>Register:</h2>
             {% if error %}
-              <p class="error">{{ error }}</p>
+                <p class="error">{{ error }}</p>
             {% endif %}
             <input type="text" name="username" placeholder="Username" required><br>
             <input type="password" name="password" placeholder="Password" required><br>

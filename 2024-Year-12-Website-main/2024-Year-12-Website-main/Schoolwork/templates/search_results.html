@@ -1,85 +1,42 @@
-{% extends "layout.html" %}
-
-{% block content %}
-    <h2>Search Results for "{{ query }}"</h2>
-
-    <h3>Cars</h3>
-    {% if car_results %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Make</th>
-                    <th>Model</th>
-                    <th>Year</th>
-                    <th>Country of Origin</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for car in car_results %}
-                <tr>
-                    <td>{{ car[0] }}</td>
-                    <td>{{ car[1] }}</td>
-                    <td>{{ car[2] }}</td>
-                    <td>{{ car[3] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body>
+    <h1>Search Results</h1>
+    
+    <h2>Cars</h2>
+    {% if cars %}
+        {% for car in cars %}
+            <p>{{ car[1] }} {{ car[2] }} ({{ car[3] }}) - {{ car[4] }}</p>
+            <img src="{{ url_for('static', filename='pics/' + car[5]) }}" alt="{{ car[2] }}" width="200">
+        {% endfor %}
     {% else %}
         <p>No cars found.</p>
     {% endif %}
 
-    <h3>Engines</h3>
-    {% if engine_results %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Make</th>
-                    <th>Model</th>
-                    <th>Engine Type</th>
-                    <th>Horse Power</th>
-                    <th>Torque (Nm)</th>
-                    <th>0-60 (s)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for engine in engine_results %}
-                <tr>
-                    <td>{{ engine[0] }}</td>
-                    <td>{{ engine[1] }}</td>
-                    <td>{{ engine[2] }}</td>
-                    <td>{{ engine[3] }}</td>
-                    <td>{{ engine[4] }}</td>
-                    <td>{{ engine[5] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <h2>Engines</h2>
+    {% if engines %}
+        {% for engine in engines %}
+            <p>Engine Type: {{ engine[0] }} - HorsePower: {{ engine[1] }} HP</p>
+        {% endfor %}
     {% else %}
         <p>No engines found.</p>
     {% endif %}
 
-    <h3>Pricing</h3>
-    {% if pricing_results %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Make</th>
-                    <th>Model</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for price in pricing_results %}
-                <tr>
-                    <td>{{ price[0] }}</td>
-                    <td>{{ price[1] }}</td>
-                    <td>{{ price[2] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <h2>Pricing</h2>
+    {% if pricing %}
+        {% for price in pricing %}
+            <p>Price: {{ price[0] }}</p>
+        {% endfor %}
     {% else %}
         <p>No pricing information found.</p>
     {% endif %}
-{% endblock %}
+    
+    <a href="{{ url_for('homepage') }}">Back to Homepage</a>
+</body>
+</html>

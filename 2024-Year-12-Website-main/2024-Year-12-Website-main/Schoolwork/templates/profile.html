@@ -10,12 +10,39 @@
     <div class="container">
         <h1>Welcome, {{ user.username }}!</h1>
         <div class="profile-container">
-            <img src="{{ url_for('static', filename='profile-pictures/default.png') }}" alt="Profile Picture" class="profile-pic">
             <div class="profile-info">
                 <p><strong>Name:</strong> {{ user.username }}</p>
-                <p><strong>Email:</strong> Not available</p>
-                <a href="/logout" class="btn btn-primary">Logout</a>
+                <a href="{{ url_for('homepage') }}" class="btn btn-secondary">Back to Homepage</a>
+                <a href="/logout" class="btn-logout">Logout</a>
+                <form action="/delete_account" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Delete Account</button>
+                </form>
+
+                <!-- Change Username Form -->
+                <h2>Change Username</h2>
+                <form method="POST" action="/change_username">
+                    <input type="text" name="new_username" required placeholder="New Username">
+                    <button type="submit">Change Username</button>
+                </form>
+
+                <!-- Change Password Form -->
+                <h2>Change Password</h2>
+                <form method="POST" action="/change_password">
+                    <input type="password" name="new_password" required placeholder="New Password">
+                    <button type="submit">Change Password</button>
+                </form>
             </div>
+
+            <!-- Feedback Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
         </div>
     </div>
 </body>

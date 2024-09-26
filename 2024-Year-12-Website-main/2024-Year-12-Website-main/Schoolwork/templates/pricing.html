@@ -11,17 +11,19 @@
         <tr>
             <th>Make</th>
             <th>Model</th>
-            <th>Price</th>
+            <th>Price(USD)</th>
         </tr>
     </thead>
     <tbody>
         {% for price in pricing %}
         <tr>
-            <td>{{ price[0] }}</td>
-            <td>{{ price[1] }}</td>
+
             <td>{{ price[2] }}</td>
+            <td>{{ price[3] }}</td>
+            <td>{{ price[4] }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% endblock %}
+(USD)

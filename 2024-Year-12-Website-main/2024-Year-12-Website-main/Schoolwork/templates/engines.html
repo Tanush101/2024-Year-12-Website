@@ -11,23 +11,29 @@
         <tr>
             <th>Make</th>
             <th>Model</th>
-            <th>Engine Type</th>
-            <th>Horsepower</th>
-            <th>Torque (Nm)</th>
+            <th>EngineType</th>
+            <th>HorsePower</th>
+            <th>TorqueNm</th>
             <th>0-60 Time (s)</th>
         </tr>
     </thead>
     <tbody>
-        {% for engine in engines %}
-        <tr>
-            <td>{{ engine[0] }}</td>
-            <td>{{ engine[1] }}</td>
-            <td>{{ engine[2] }}</td>
-            <td>{{ engine[3] }}</td>
-            <td>{{ engine[4] }}</td>
-            <td>{{ engine[5] }}</td>
-        </tr>
-        {% endfor %}
+        {% if engines %}
+            {% for engine in engines %}
+            <tr>
+                <td>{{ engine[2] }}</td>
+                <td>{{ engine[3] }}</td>
+                <td>{{ engine[4] }}</td>
+                <td>{{ engine[5] }}</td>
+                <td>{{ engine[6] }}</td>
+                <td>{{ engine[7] }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="6">No engine data available.</td>
+            </tr>
+        {% endif %}
     </tbody>
 </table>
 {% endblock %}

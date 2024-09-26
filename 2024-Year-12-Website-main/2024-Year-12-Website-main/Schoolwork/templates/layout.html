@@ -10,7 +10,7 @@
         <header>
             <h1>Your Car Enthusiast Hub</h1>
             {% include 'nav.html' %}
-            <form action="{{ url_for('search') }}" method="POST" class="search-form">
+            <form action="{{ url_for('search') }}" method="GET" class="search-form"> <!-- Change to GET -->
                 <input type="text" name="query" placeholder="Search..." required>
                 <button type="submit">Search</button>
             </form>

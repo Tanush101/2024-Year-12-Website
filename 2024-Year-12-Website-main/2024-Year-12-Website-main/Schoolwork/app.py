@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
+import re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for session management
@@ -62,6 +63,7 @@ def insert_user(username, password):
     try:
         conn.execute('INSERT INTO User (username, password) VALUES (?, ?)', (username, hashed_password))
         conn.commit()
+        return None  # Return None for success
     except sqlite3.IntegrityError:
         return "User already exists."
 
@@ -89,6 +91,18 @@ def logout():
 def home():
     return render_template('home.html')
 
+# Constants for validation
+MIN_USERNAME_LENGTH = 1
+MAX_USERNAME_LENGTH = 20
+MIN_PASSWORD_LENGTH = 8
+MAX_PASSWORD_LENGTH = 100
+
+def is_valid_username(username):
+    return (MIN_USERNAME_LENGTH <= len(username) <= MAX_USERNAME_LENGTH) and bool(re.match('^[a-zA-Z0-9]+$', username))
+
+def is_valid_password(password):
+    return (MIN_PASSWORD_LENGTH <= len(password) <= MAX_PASSWORD_LENGTH) and bool(re.match('^[a-zA-Z0-9@#$%^&+=]+$', password))
+
 # Login page route
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -96,12 +110,18 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = valid_login(username, password)
-        if user:
-            user_obj = User(id=user[0], username=user[1])
-            return log_the_user_in(user_obj)
+
+        if not is_valid_username(username):
+            error = f"Username must be between {MIN_USERNAME_LENGTH} and {MAX_USERNAME_LENGTH} characters and contain only alphanumeric characters."
+        elif not is_valid_password(password):
+            error = f"Password must be between {MIN_PASSWORD_LENGTH} and {MAX_PASSWORD_LENGTH} characters and contain only alphanumeric characters or @#$%^&+=."
         else:
-            error = 'Invalid username/password'
+            user = valid_login(username, password)
+            if user:
+                user_obj = User(id=user[0], username=user[1])
+                return log_the_user_in(user_obj)
+            else:
+                error = 'Invalid username/password'
     return render_template('login.html', error=error)
 
 # Register page route
@@ -111,11 +131,18 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        result = insert_user(username, password)
-        if result:
-            error = result
+
+        if not is_valid_username(username):
+            error = f"Username must be between {MIN_USERNAME_LENGTH} and {MAX_USERNAME_LENGTH} characters and contain only alphanumeric characters."
+        elif not is_valid_password(password):
+            error = f"Password must be between {MIN_PASSWORD_LENGTH} and {MAX_PASSWORD_LENGTH} characters and contain only alphanumeric characters or @#$%^&+=."
         else:
-            return "User registered successfully!"
+            result = insert_user(username, password)
+            if result:
+                error = result
+            else:
+                flash("User registered successfully! Please log in.", "success")
+                return redirect(url_for('login'))  # Redirect to login after successful registration
     return render_template('register.html', error=error)
 
 # Protected route for profile page
@@ -124,22 +151,77 @@ def register():
 def profile():
     return render_template('profile.html', user=current_user)
 
-# Homepage route (protected)
+# Change username route
+@app.route('/change_username', methods=['POST'])
+@login_required
+def change_username():
+    new_username = request.form['new_username']
+    
+    # Validate the new username
+    if not is_valid_username(new_username):
+        flash("Username must be between 1 and 20 characters and contain only alphanumeric characters.", "error")
+        return redirect(url_for('profile'))
+    
+    # Update the username in the database
+    conn = get_db()
+    conn.execute('UPDATE User SET username = ? WHERE UserID = ?', (new_username, current_user.id))
+    conn.commit()
+    
+    flash("Username changed successfully!", "success")
+    return redirect(url_for('profile'))
+
+# Change password route
+@app.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    new_password = request.form['new_password']
+    
+    # Validate the new password
+    if not is_valid_password(new_password):
+        flash("Password must be between 8 and 100 characters.", "error")
+        return redirect(url_for('profile'))
+
+    # Update the password in the database
+    hashed_password = generate_password_hash(new_password)
+    conn = get_db()
+    conn.execute('UPDATE User SET password = ? WHERE UserID = ?', (hashed_password, current_user.id))
+    conn.commit()
+    
+    flash("Password changed successfully!", "success")
+    return redirect(url_for('profile'))
+
+# Delete account route
+@app.route('/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    user_id = current_user.id
+    delete_user(user_id)  # Call the function to delete the user
+    logout_user()  # Log the user out after deletion
+    flash("Your account has been deleted.", "success")
+    return redirect(url_for('home'))
+
+# Function to delete a user from the database
+def delete_user(user_id):
+    conn = get_db()
+    conn.execute('DELETE FROM User WHERE UserID = ?', (user_id,))
+    conn.commit()
+
+# Homepage route
 @app.route('/homepage')
 @login_required
 def homepage():
     Cars = os.path.join(app.config['UPLOAD_FOLDER'], 'Cars.jpg')
     return render_template('homepage.html', user_image=Cars, title="Homepage")
 
-# Cars page route (protected)
+# Cars page route
 @app.route('/cars')
 @login_required
 def cars():
     Ferrari = os.path.join(app.config['UPLOAD_FOLDER'], 'Ferrari.jpg')
-    cars = get_cars()
+    cars = get_cars()  # Fetch car data including image filenames
     return render_template('cars.html', cars=cars, user_image=Ferrari, title="Cars")
 
-# Engine specs route (protected)
+# Engine specs route
 @app.route('/engines')
 @login_required
 def engine_specs():
@@ -147,7 +229,7 @@ def engine_specs():
     engines = get_engines()
     return render_template('engines.html', engines=engines, user_image=Engine, title="Engines")
 
-# Pricing info route (protected)
+# Pricing info route
 @app.route('/pricing')
 @login_required
 def pricing_info():
@@ -155,63 +237,72 @@ def pricing_info():
     pricing = get_pricing()
     return render_template('pricing.html', pricing=pricing, user_image=Pricing, title="Pricing")
 
-# Fetch cars
-def get_cars():
+# Fetch cars including their image filenames
+def get_cars(query=None):
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
-    cur.execute('SELECT Make, Model, Year, CountryOfOrigin FROM Cars')
+
+    if query:
+        cur.execute("SELECT Make, Model, Year, CountryOfOrigin, ImageFileName FROM Cars WHERE Make LIKE ? OR Model LIKE ?", ('%' + query + '%', '%' + query + '%'))
+    else:
+        cur.execute('SELECT Make, Model, Year, CountryOfOrigin, ImageFileName FROM Cars')
+
     cars = cur.fetchall()
-    conn.close()
+    cur.close()
     return cars
 
-# Fetch engine specs
-def get_engines():
+# Fetch engine specs related to a specific car
+def get_engines(model=None):
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
-    cur.execute('SELECT Make, Model, EngineType, HorsePower, TorqueNm, ZeroToSixty FROM EngineSpecs')
+    
+    if model:
+        cur.execute("SELECT EngineType, HorsePower, TorqueNm, ZeroToSixty FROM EngineSpecs WHERE CarID = (SELECT CarID FROM Cars WHERE Model = ?)", (model,))
+    else:
+        cur.execute("SELECT * FROM EngineSpecs")
+
     engines = cur.fetchall()
-    conn.close()
+    cur.close()
     return engines
 
-# Fetch pricing details
-def get_pricing():
+# Fetch pricing info related to a specific car
+def get_pricing(model=None):
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
-    cur.execute('SELECT Make, Model, Price FROM Pricing')
+    
+    if model:
+        cur.execute("SELECT Price FROM Pricing WHERE CarID = (SELECT CarID FROM Cars WHERE Model = ?)", (model,))
+    else:
+        cur.execute("SELECT * FROM Pricing")
+
     pricing = cur.fetchall()
-    conn.close()
+    cur.close()
     return pricing
 
 # Search route
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/search', methods=['GET'])
 @login_required
 def search():
-    query = ''
-    car_results = []
-    engine_results = []
-    pricing_results = []
-    
-    if request.method == 'POST':
-        query = request.form.get('query')
-        if query:
-            # Search through cars
-            car_results = query_db('SELECT Make, Model, Year, CountryOfOrigin FROM Cars WHERE Make LIKE ? OR Model LIKE ?', ['%' + query + '%', '%' + query + '%'])
-            # Search through engines
-            engine_results = query_db('SELECT Make, Model, EngineType, HorsePower, TorqueNm, ZeroToSixty FROM EngineSpecs WHERE Make LIKE ? OR Model LIKE ?', ['%' + query + '%', '%' + query + '%'])
-            # Search through pricing
-            pricing_results = query_db('SELECT Make, Model, Price FROM Pricing WHERE Make LIKE ? OR Model LIKE ?', ['%' + query + '%', '%' + query + '%'])
-    
-    return render_template('search_results.html', query=query, car_results=car_results, engine_results=engine_results, pricing_results=pricing_results)
+    query = request.args.get('query')
+    cars = get_cars(query)
+    return render_template('cars.html', cars=cars, title="Search Results")
 
-# Close database connection
+# Error handler for 404
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+# Before request to handle database connections
+@app.before_request
+def before_request():
+    create_user_table()
+
+# After request to close the database connection
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
-# Run the Flask app
 if __name__ == '__main__':
-    with app.app_context():
-        create_user_table()
     app.run(debug=True)
